@@ -816,7 +816,7 @@ placeImage <- function(img, x, y, w=NA, h=NA, invert.y=FALSE, display=TRUE, ...)
         w <- h / (asp / img.asp)
     }
     if(is.na(h) ){
-        h <- w * (asp / img.asp)
+        h <- w / (img.asp / asp)
     }
     ## note that ytop and ybottom are inverted
     if(display){

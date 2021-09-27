@@ -532,10 +532,10 @@ sc.text <- function(txt, x=NA, y=NA, max.w=diff(par('usr')[1:2]), cex=1, adj=c(0
 ## otherwise prefix with: 'd'=number, 'l'=lower case letter, 'L'=upper case letter
 ##                        'r'=roman numeral (i, ii, iii)
 bullet.list <- function(text, x, y, max.w=NA, max.h=NA, indent.str='MM', t.cex=c(4,3,2,1), pch=19, line.spc=2,
-                        prefix.style=c('d', 'l', 'r'), prefix.sep=c(". ", ") ", " "),  bullet=TRUE){
+                        prefix.style=c('d', 'l', 'r'), prefix.sep=c(". ", ") ", " "),  bullet=TRUE, ...){
     ## txt.fmt must be a data frame, that contains:
     ## 
-    format.txt <- function(text, max.w, indent, indent.str, t.cex, level, j){
+    format.txt <- function(text, max.w, indent, indent.str, t.cex, level, j, ...){
         text.fmt <- data.frame()
         j.sub <- 0
         level.n <- sum( sapply( text, is.character ))
@@ -544,12 +544,12 @@ bullet.list <- function(text, x, y, max.w=NA, max.h=NA, indent.str='MM', t.cex=c
             prefix.space <- strwidth( make.prefix(level.n,
                                                   prefix.style[min(level+1, length(prefix.style))],
                                                   prefix.sep[min(level+1, length(prefix.sep))]),
-                                     cex=cex)
+                                     cex=cex, ...)
         else
-            prefix.space <- strwidth('x', cex=cex)
+            prefix.space <- strwidth('x', cex=cex, ...)
         ## then go through and make all the members.. 
         for(i in 1:length(text)){
-            l1 <- indent + ifelse(level > 0, strwidth(indent.str, cex=cex), 0)
+            l1 <- indent + ifelse(level > 0, strwidth(indent.str, cex=cex, ...), 0)
             if(is.list(text[[i]])){
                 text.fmt = rbind(text.fmt, format.txt(text[[i]], max.w, indent + l1, indent.str, t.cex, level+1, j.sub))
                 j.sub <- j.sub + 1
@@ -564,8 +564,8 @@ bullet.list <- function(text, x, y, max.w=NA, max.h=NA, indent.str='MM', t.cex=c
             ## if(!bullet)
             ##     text[[i]] <- paste(prefix, text[[i]], sep="")
             w <- max.w - (l1 + prefix.space)
-            txt <- do.call( rbind, Map(data.frame, lapply( text[[i]], usrStrWrap, w=w, cex=cex )) )
-            text.fmt <- rbind(text.fmt, cbind('x'=l1, 'cex'=cex, 'ls'=strheight('A', cex=cex), 'prefix'=prefix,
+            txt <- do.call( rbind, Map(data.frame, lapply( text[[i]], usrStrWrap, w=w, cex=cex, ... )) )
+            text.fmt <- rbind(text.fmt, cbind('x'=l1, 'cex'=cex, 'ls'=strheight('A', cex=cex, ...), 'prefix'=prefix,
                                               'p.space'=prefix.space, txt))
         }
         text.fmt
@@ -577,7 +577,7 @@ bullet.list <- function(text, x, y, max.w=NA, max.h=NA, indent.str='MM', t.cex=c
         max.h <- y - usr[3]
     
     repeat({
-        txt.r <- format.txt( text, max.w, 0, indent.str, t.cex, 0, 0)
+        txt.r <- format.txt( text, max.w, 0, indent.str, t.cex, 0, 0, ...)
         h <- txt.r$h + (line.spc * txt.r$ls)
         if( sum(h) < max.h )
             break
@@ -590,11 +590,11 @@ bullet.list <- function(text, x, y, max.w=NA, max.h=NA, indent.str='MM', t.cex=c
     p.y <- y + h - txt.r$ls 
 ##    b.w <- ifelse(rep(bullet, nrow(txt.r)), strwidth('x', cex=txt.r$cex), 0)
     b.w <- txt.r$p.space
-    text( x + txt.r$x + b.w, y, txt.r$s, cex=txt.r$cex, adj=c(0,0) )
-    text( x + txt.r$x, p.y, txt.r$prefix, cex=txt.r$cex, adj=c(0,0) )    
+    text( x + txt.r$x + b.w, y, txt.r$s, cex=txt.r$cex, adj=c(0,0), ... )
+    text( x + txt.r$x, p.y, txt.r$prefix, cex=txt.r$cex, adj=c(0,0), ... )    
     if(bullet)
         points( x + txt.r$x, b.y, pch=pch, cex=txt.r$cex )
-    txt.r
+    invisible(list( y=y, r=txt.r ))
 }
 
 ## some ideas as to how to output tables in R..

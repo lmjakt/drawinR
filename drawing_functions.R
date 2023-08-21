@@ -532,7 +532,8 @@ sc.text <- function(txt, x=NA, y=NA, max.w=diff(par('usr')[1:2]), cex=1, adj=c(0
 ## otherwise prefix with: 'd'=number, 'l'=lower case letter, 'L'=upper case letter
 ##                        'r'=roman numeral (i, ii, iii)
 bullet.list <- function(text, x, y, max.w=NA, max.h=NA, indent.str='MM', t.cex=c(4,3,2,1), pch=19, line.spc=2,
-                        prefix.style=c('d', 'l', 'r'), prefix.sep=c(". ", ") ", " "),  bullet=TRUE, ...){
+                        prefix.style=c('d', 'l', 'r'), prefix.sep=c(". ", ") ", " "),  bullet=TRUE, bullet.cex=1,
+                        ...){
     ## txt.fmt must be a data frame, that contains:
     ## 
     format.txt <- function(text, max.w, indent, indent.str, t.cex, level, j, ...){
@@ -581,7 +582,7 @@ bullet.list <- function(text, x, y, max.w=NA, max.h=NA, indent.str='MM', t.cex=c
         h <- txt.r$h + (line.spc * txt.r$ls)
         if( sum(h) < max.h )
             break
-        t.cex <- t.cex * 0.75
+        t.cex <- t.cex * 0.9
     })
     ls <- txt.r$ls * line.spc
     h <- txt.r$h
@@ -593,7 +594,7 @@ bullet.list <- function(text, x, y, max.w=NA, max.h=NA, indent.str='MM', t.cex=c
     text( x + txt.r$x + b.w, y, txt.r$s, cex=txt.r$cex, adj=c(0,0), ... )
     text( x + txt.r$x, p.y, txt.r$prefix, cex=txt.r$cex, adj=c(0,0), ... )    
     if(bullet)
-        points( x + txt.r$x, b.y, pch=pch, cex=txt.r$cex )
+        points( x + txt.r$x, b.y, pch=pch, cex=txt.r$cex * bullet.cex )
     invisible(list( y=y, r=txt.r ))
 }
 
@@ -659,7 +660,7 @@ plotTable <- function(x, y, df, c.widths=NULL, num.format=NA,
     ##                        max( sapply(x.f, function(y){ y$h } ) )
     ##                    })
     
-    v.margin <- min( r.heights ) * row.margin
+    v.margin <- min( r.heights[r.heights > 0] ) * row.margin
     r.heights <- r.heights + v.margin
     ## v.margin <- min( r.heights ) * row.margin/2
     ## r.heights <- r.heights + (v.margin)  * min(r.heights)

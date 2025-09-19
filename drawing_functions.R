@@ -624,6 +624,14 @@ plotTable <- function(x, y, df, c.widths=NULL, num.format=NA,
     if(!is.null(colnames(df)))
         df.m <- rbind(colnames(df), df.m)
 
+    ## add rownames if present:
+    if(!is.null(rownames(df))){
+        if(is.null(colnames(df)))
+            df.m <- cbind(rownames(df), df.m)
+        else
+            df.m <- cbind(c("", rownames(df)), df.m)
+    }
+    
     ## This should probably be an option, but seems reasonable 
     df.m[is.na(df.m) | is.null(df.m)] <- ""
     
